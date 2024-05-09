@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        $request->validate([
+            'email' => 'required|email', // Asegura que el campo email no esté llegando como nulo y que sea un correo electrónico válido
+            // Otros campos a validar...
+        ]);
+        
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');

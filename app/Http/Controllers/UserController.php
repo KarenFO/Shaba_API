@@ -70,27 +70,39 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // PUT - Actualizar un cliente existente
-    public function update(Request $request, string $id)
-    {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+     
+     public function update(Request $request){
+        $user = User::find($request->id);
+    
+        if ($user) {
+            if ($request->has('first_name')) {
+                $user->first_name = $request->first_name;
+            }
+            if ($request->has('last_name')) {
+                $user->last_name = $request->last_name;
+            }            
+            // Verifica si el campo "email" se proporciona en la solicitud
+            if ($request->has('email')) {
+                $user->email = $request->email;
+            }
+            if ($request->has('email_verified_at')) {
+                $user->email_verified_at = $request->email_verified_at;
+            }
+          
+            if ($request->has('phone')) {
+                $user->phone = $request->phone;
+            }
+            if ($request->has('password')) {
+                $user->password = bcrypt($request->password);
+            }
+    
+            $user->save();
+            return response()->json($user, 200);
+        } else {
+            return response()->json(['mensaje' => 'Usuario no encontrado'], 404);
         }
-
-        $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'address' => 'required',
-            'email' => 'required|email|unique:user,email,' . $user->id,
-            'password' => 'required',
-            'phone' => 'required'
-        ]);
-
-        $user->update($request->all());
-        return response()->json($user, 200);
     }
-
+    
     /**
      * Remove the specified resource from storage.
      */
